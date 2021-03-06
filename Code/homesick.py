@@ -9,7 +9,7 @@ SCREEN_TITLE = "Home Sick"
 
 MOVEMENT_SPEED = 5
 
-class MyGame(arcade.Window):
+class Homesick(arcade.Window):
     """ Main application class. """
 
     def __init__(self, width, height, title):
@@ -38,28 +38,13 @@ class MyGame(arcade.Window):
         self.stage2 = False
         self.stage3 = False
 
-    def setup(self):
-        """ Set up the game and initialize the variables. """
-
-        # Sprite lists
-        self.player_list = arcade.SpriteList()
-        self.wall_list = arcade.SpriteList()
-
-        # Set up the player
-        self.player_sprite = arcade.Sprite(":resources:images/alien/alienBlue_front.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 64
-        self.player_list.append(self.player_sprite)
-
-        # -- Set up the walls
-
-        # Create a row of boxes
+    def createMaze(self):
         for x in range(0, 800, 32):
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = x+17
             wall.center_y = 794
             self.wall_list.append(wall)
-            
+
         for x in range(0, 800, 32):
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = x+17
@@ -114,8 +99,6 @@ class MyGame(arcade.Window):
             wall.center_y = y-35
             self.wall_list.append(wall)
         
-        #Chris's end here
-        
         for y in range(400, 490, 32): #9
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = 297
@@ -151,8 +134,6 @@ class MyGame(arcade.Window):
             wall.center_x = 80
             wall.center_y = y
             self.wall_list.append(wall)
-            
-        # Aaron ends here
         
         for y in range(150, 500, 32): #13
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
@@ -214,10 +195,23 @@ class MyGame(arcade.Window):
             wall.center_y = y
             self.wall_list.append(wall)
 
-        
+    def setup(self):
+        """ Set up the game and initialize the variables. """
+
+        # Sprite lists
+        self.player_list = arcade.SpriteList()
+        self.wall_list = arcade.SpriteList()
+
+        # Set up the player
+        self.player_sprite = arcade.Sprite(":resources:images/alien/alienBlue_front.png", SPRITE_SCALING)
+        self.player_sprite.center_x = 50
+        self.player_sprite.center_y = 64
+        self.player_list.append(self.player_sprite)
+
+        # -- Set up the maze
+        self.createMaze()
 
         #:resources:images/topdown_tanks/treeGreen_large.png
-
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                          self.wall_list)
 
@@ -225,10 +219,7 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.AMAZON)
 
     def on_draw(self):
-        """
-        Render the screen.
-        """
-
+        """ Renders the screen. """
         # This command has to happen before we start drawing
         arcade.start_render()
 
@@ -258,21 +249,10 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
+
         if self.player_sprite.center_x > 800:
             self.stage2 = True
             print(self.stage2)
         
-        # Call update on all sprites (The sprites don't do much in this
-        # example though.)
+        # Call update on all sprites
         self.physics_engine.update()
-
-
-def main():
-    """ Main method """
-    window = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    window.setup()
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()
