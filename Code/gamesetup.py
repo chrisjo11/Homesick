@@ -42,6 +42,8 @@ class MyGame(arcade.Window):
         self.current_room = 0
 
         # Set up the player
+        self.sprite1 = arcade.Sprite("playerDown.png", SPRITE_SCALING)
+        
         self.rooms = None
         self.player_sprite = None
         self.player_list = None
@@ -121,6 +123,8 @@ class MyGame(arcade.Window):
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
         self.physics_engine.update()
+
+        self.sprite1.set_position(400, 400)
 
         # Do some logic here to figure out what room we are in, and if we need to go
         # to a different room.
