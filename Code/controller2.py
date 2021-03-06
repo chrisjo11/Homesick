@@ -5,7 +5,7 @@ SPRITE_SCALING = 0.25
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
-SCREEN_TITLE = "Sprite Move with Walls Example"
+SCREEN_TITLE = "Home Sick"
 
 MOVEMENT_SPEED = 5
 
@@ -33,6 +33,10 @@ class MyGame(arcade.Window):
         # Set up the player
         self.player_sprite = None
         self.physics_engine = None
+
+        self.stage1 = True
+        self.stage2 = False
+        self.stage3 = False
 
     def setup(self):
         """ Set up the game and initialize the variables. """
@@ -62,10 +66,10 @@ class MyGame(arcade.Window):
             wall.center_y = 7
             self.wall_list.append(wall)
 
-        for y in range(0, 800, 32):
+        for y in range(80, 800, 32):
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = 795
-            wall.center_y = y+17
+            wall.center_y = y+20
             self.wall_list.append(wall)
             
         for y in range(0, 800, 32):
@@ -114,13 +118,13 @@ class MyGame(arcade.Window):
         
         for y in range(400, 490, 32): #9
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 320
+            wall.center_x = 297
             wall.center_y = y+15
             self.wall_list.append(wall)
         
         for x in range(370, 500, 32): #8
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = x-50
+            wall.center_x = x-60
             wall.center_y = 415
             self.wall_list.append(wall)
         
@@ -130,21 +134,21 @@ class MyGame(arcade.Window):
             wall.center_y = 415
             self.wall_list.append(wall)
         
-        for x in range(200, 350, 32): #10
+        for x in range(180, 330, 32): #10
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = x-10
             wall.center_y = 500
             self.wall_list.append(wall)
         
-        for x in range(150, 300, 32): #11
+        for x in range(150, 250, 32): #11
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = 550
+            wall.center_x = x-70
+            wall.center_y = 585
             self.wall_list.append(wall)
         
-        for y in range(0, 550, 32): #12
+        for y in range(0, 580, 32): #12
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 100
+            wall.center_x = 80
             wall.center_y = y
             self.wall_list.append(wall)
             
@@ -152,14 +156,14 @@ class MyGame(arcade.Window):
         
         for y in range(150, 500, 32): #13
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 190
+            wall.center_x = 170
             wall.center_y = y+10
             self.wall_list.append(wall)
         
-        for y in range(0, 100, 32): #14
+        for x in range(170, 220, 32): #14
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 50
-            wall.center_y = y+130
+            wall.center_x = x
+            wall.center_y = 130
             self.wall_list.append(wall)
         
         for y in range(0, 800, 32): #15
@@ -167,14 +171,8 @@ class MyGame(arcade.Window):
             wall.center_x = 4
             wall.center_y = y+17
             self.wall_list.append(wall)
-       
-        for y in range(0, 800, 32): #16
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 4
-            wall.center_y = y+17
-            self.wall_list.append(wall)
         
-        for x in range(370, 500, 32): #17
+        for x in range(330, 500, 32): #17
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = x
             wall.center_y = 290
@@ -182,7 +180,7 @@ class MyGame(arcade.Window):
         #martin
         for y in range(100, 290, 32): #18
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = 500
+            wall.center_x = 490
             wall.center_y = y
             self.wall_list.append(wall)
         #martin
@@ -210,7 +208,7 @@ class MyGame(arcade.Window):
             wall.center_y = 100
             self.wall_list.append(wall)
         #martin
-        for y in range(0, 150, 32): #23
+        for y in range(0, 290, 32): #23
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = 315
             wall.center_y = y
@@ -260,7 +258,10 @@ class MyGame(arcade.Window):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-
+        if self.player_sprite.center_x > 800:
+            self.stage2 = True
+            print(self.stage2)
+        
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
         self.physics_engine.update()
