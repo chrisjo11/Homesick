@@ -82,7 +82,7 @@ def setup_room_1():
     
     for y in range(0, 100, 32): #3
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = 350
+        wall.center_x = 336
         wall.center_y = y+605
         room.wall_list.append(wall)
 
@@ -100,8 +100,8 @@ def setup_room_1():
     
     for y in range(450, 640, 32): #6
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = 670
-        wall.center_y = y-35
+        wall.center_x = 660
+        wall.center_y = y-30
         room.wall_list.append(wall)
     
     for y in range(400, 490, 32): #9
@@ -112,14 +112,14 @@ def setup_room_1():
     
     for x in range(370, 500, 32): #8
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = x-60
+        wall.center_x = x-70
         wall.center_y = 415
         room.wall_list.append(wall)
     
     for x in range(300, 450, 32): #7
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = x+238
-        wall.center_y = 415
+        wall.center_x = x+228
+        wall.center_y = 420
         room.wall_list.append(wall)
     
     for x in range(180, 330, 32): #10
@@ -137,19 +137,19 @@ def setup_room_1():
     for y in range(0, 580, 32): #12
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
         wall.center_x = 80
-        wall.center_y = y
+        wall.center_y = y+10
         room.wall_list.append(wall)
     
     for y in range(150, 500, 32): #13
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
         wall.center_x = 170
-        wall.center_y = y+10
+        wall.center_y = y+3
         room.wall_list.append(wall)
     
     for x in range(170, 220, 32): #14
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
         wall.center_x = x
-        wall.center_y = 130
+        wall.center_y = 123
         room.wall_list.append(wall)
     
     for y in range(0, 800, 32): #15
@@ -172,13 +172,13 @@ def setup_room_1():
     
     for x in range(500, 630, 32): #19
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = x
+        wall.center_x = x-8
         wall.center_y = 100
         room.wall_list.append(wall)
     
     for y in range(100, 250, 32): #20
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = 630
+        wall.center_x = 622
         wall.center_y = y
         room.wall_list.append(wall)
     
@@ -196,7 +196,7 @@ def setup_room_1():
     
     for y in range(0, 290, 32): #23
         wall = arcade.Sprite(walls, SPRITE_SCALING+SPRITE_SCALING_PART_2)
-        wall.center_x = 315
+        wall.center_x = 330
         wall.center_y = y
         room.wall_list.append(wall)
 
@@ -263,7 +263,7 @@ def setup_room_2():
         enemy = arcade.Sprite(enemies, SPRITE_SCALING+0.1)
         enemy.center_x = 100+150*i
         enemy.center_y = random.randrange(0, 800)
-        enemy.change_y = 10
+        enemy.change_y = 7
         enemy.change_x = 0
         room.enemy_list.append(enemy)
 
@@ -271,7 +271,7 @@ def setup_room_2():
         enemy = arcade.Sprite(enemies, SPRITE_SCALING+0.1)
         enemy.center_x = 150+150*i
         enemy.center_y = random.randrange(0, 800)
-        enemy.change_y = 10
+        enemy.change_y = 7
         enemy.change_x = 0
         room.enemy_list.append(enemy)
     
@@ -426,7 +426,7 @@ class MyGame(arcade.Window):
         # Do some logic here to figure out what room we are in, and if we need to go
         # to a different room.
         if self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 0:
-            self.player_sprite.center_x = 100
+            self.player_sprite.center_x = 50
             self.player_sprite.center_y = 50
 
             self.current_room = 1
@@ -447,8 +447,8 @@ class MyGame(arcade.Window):
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list) 
         elif self.player_sprite.center_x < 0 and self.current_room == 2:
-            self.player_sprite.center_x = 100
-            self.player_sprite.center_y = 150
+            self.player_sprite.center_x = 775
+            self.player_sprite.center_y = 50
 
             self.current_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
