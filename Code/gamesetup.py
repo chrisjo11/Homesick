@@ -222,11 +222,11 @@ def setup_room_2():
     room.enemy_list = arcade.SpriteList()
     room.background_list = arcade.SpriteList()
 
-    for i in range(0, 700, 32):
+    for i in range(100, 800, 32):
         gate = arcade.Sprite(gates, SPRITE_SCALING)
         gate.center_x = 780
         gate.center_y = i
-        gate.wall_list.append(gate)
+        room.wall_list.append(gate)
 
     for i in range(100, 800, 100):
         bush = arcade.Sprite(bushes, SPRITE_SCALING+.2)
