@@ -367,7 +367,7 @@ class MyGame(arcade.Window):
         
         for enemy in self.rooms[1].enemy_list:
             enemy.center_y += enemy.change_y
-            enemy.center_x += enemy.change_y
+            enemy.center_x += enemy.change_x
 
-            if enemy.center_y <= 0 or enemy.center_y >= 0:
-                enemy.change_y *= 1
+            if enemy.center_y <= 0 or enemy.center_y >= 800:
+                enemy.change_y *= -1
