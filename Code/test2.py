@@ -142,7 +142,6 @@ class MyGame(arcade.Window):
             if len(walls_hit) > 0:
                 coin.change_y *= -1
 
-
 def main():
     """ Main method """
     window = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
