@@ -216,6 +216,8 @@ def setup_room_2():
     enemy = arcade.Sprite(":resources:images/animated_characters/male_adventurer/maleAdventurer_idle.png")
     enemy.center_x = 400
     enemy.center_y = 200
+    enemy.change_y = 1
+    enemy.change_x = 0
     room.enemy_list.append(enemy)
 
 
@@ -261,7 +263,9 @@ class MyGame(arcade.Window):
         
         self.rooms = None
         self.player_sprite = None
+        self.enemy_sprite = None
         self.player_list = None
+        self.enemy_list = None
         self.physics_engine = None
 
     def setup(self):
@@ -272,6 +276,7 @@ class MyGame(arcade.Window):
         self.player_sprite.center_y = 100
         self.player_list = arcade.SpriteList()
         self.player_list.append(self.player_sprite)
+    
 
         # Our list of rooms
         self.rooms = []
@@ -311,6 +316,8 @@ class MyGame(arcade.Window):
         # above for each list.
 
         self.player_list.draw()
+        if self.current_room == 1:
+            self.rooms[1].enemy_list.draw()
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -358,7 +365,9 @@ class MyGame(arcade.Window):
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list)
         
-        # if self.current_room == 1:
-        #     collide = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[self.current_room].enemy_list)
-        #     if len(collide) > 0:
-        #         print(collide)
+        for enemy in self.rooms[1].enemy_list:
+            enemy.center_y += enemy.change_y
+            enemy.center_x += enemy.change_y
+
+            if enemy.center_y <= 0 or enemy.center_y >= 0:
+                enemy.change_y *= 1
