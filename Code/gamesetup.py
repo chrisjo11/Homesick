@@ -7,6 +7,7 @@ If Python and Arcade are installed, this example can be run from the command lin
 python -m arcade.examples.sprite_rooms
 """
 
+import random
 import arcade
 import os
 from roomsetup import Room
@@ -213,13 +214,21 @@ def setup_room_2():
     room.wall_list = arcade.SpriteList()
     room.enemy_list = arcade.SpriteList()
 
-    enemy = arcade.Sprite(":resources:images/animated_characters/male_adventurer/maleAdventurer_idle.png")
-    enemy.center_x = 400
-    enemy.center_y = 200
-    enemy.change_y = 1
-    enemy.change_x = 0
-    room.enemy_list.append(enemy)
+    for i in range(1, 5):
+        enemy = arcade.Sprite(":resources:images/animated_characters/male_adventurer/maleAdventurer_idle.png", SPRITE_SCALING+0.1)
+        enemy.center_x = 100+150*i
+        enemy.center_y = random.randrange(0, 800)
+        enemy.change_y = 10
+        enemy.change_x = 0
+        room.enemy_list.append(enemy)
 
+    for i in range(1, 5):
+        enemy = arcade.Sprite(":resources:images/animated_characters/male_adventurer/maleAdventurer_idle.png", SPRITE_SCALING+0.1)
+        enemy.center_x = 150+150*i
+        enemy.center_y = random.randrange(0, 800)
+        enemy.change_y = 10
+        enemy.change_x = 0
+        room.enemy_list.append(enemy)
 
 
     # -- Set up the walls
@@ -272,8 +281,8 @@ class MyGame(arcade.Window):
         """ Set up the game and initialize the variables. """
         # Set up the player
         self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 100
-        self.player_sprite.center_y = 100
+        self.player_sprite.center_x = 50
+        self.player_sprite.center_y = 50
         self.player_list = arcade.SpriteList()
         self.player_list.append(self.player_sprite)
     
@@ -364,7 +373,13 @@ class MyGame(arcade.Window):
             self.current_room = 0
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list)
-        
+        if self.current_room == 1:
+            colliding = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[1].enemy_list)
+            if len(colliding) > 0:
+                self.player_sprite.center_x = 100
+                self.player_sprite.center_y = 50
+
+
         for enemy in self.rooms[1].enemy_list:
             enemy.center_y += enemy.change_y
             enemy.center_x += enemy.change_x
