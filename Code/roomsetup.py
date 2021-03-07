@@ -1,12 +1,8 @@
 class Room:
-    """
-    This class holds all the information about the
-    different rooms.
-    """
+    # This class holds details to initialize each room
     def __init__(self):
-        # You may want many lists. Lists for coins, monsters, etc.
+        # List for all the walls in each room
         self.wall_list = None
         
-        # This holds the background images. If you don't want changing
-        # background images, you can delete this part.
+        # List for the background of each room
         self.background = None
