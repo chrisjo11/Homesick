@@ -1,31 +1,13 @@
-# OpenRPG
-Stage 1:
-    Object for player
-    - Hitbox
-    - Movement (priority)
-    - Sprite
+# Homesick
 
-    Object for obstacles
-    - Hitbox
-    - Sprite
+A basic game where you move in between stages in order to reach your destination, a spaceship, which brings you back to your home planet.
 
-    Object for stage
-    - Background
-    - Position of obstacles
+STATS:
 
-Stage 2:
-    Player Additions
-    - Animation(stage 2)
-    - Camera that follows character
-    Stage Additions:
-    - Larger map
+834 Lines of Code
 
-STAGE 3 and beyond:
-    Player additions:
-    - Stats(attack, hp, hunger,range)
-    - hunger/thirst/stamina
-    Enemy
-    - Stats
-    - Movement
-    - Sprite
-    - Animation
+4 files:
+  - main.py
+  - rooms.py
+  - gamesetup.py
+  - roomsetup.py
