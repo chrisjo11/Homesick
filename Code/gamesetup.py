@@ -100,7 +100,7 @@ class MyGame(arcade.Window):
         self.rooms.append(room)
 
         # Our starting room number
-        self.current_room = 3
+        self.current_room = 0
 
         # Create a physics engine for this room (only for the wall objects)
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.rooms[self.current_room].wall_list)
@@ -158,11 +158,20 @@ class MyGame(arcade.Window):
             # Calculate seconds
             seconds = int(self.timeEnd) % 60
 
-            # Figure out our output
-            output = f"Time: {minutes:02d}:{seconds:02d}"
+            # Output timer
+            arcade.draw_text("Time: " + str(minutes) + ":" + str(seconds) + " Death Count: " + str(self.killcount),
+                            400, 600, arcade.color.WHITE, 30, width=800, align="center",
+                            anchor_x="center", anchor_y="center")
 
-            # Output the timer text.
-            arcade.draw_text(output, 250, 700, arcade.color.WHITE, 50)
+            # Output winning message
+            arcade.draw_text("YOU WON!",
+                            400, 700, arcade.color.WHITE, 50, width=800, align="center",
+                            anchor_x="center", anchor_y="center")
+
+            # Output exit message
+            arcade.draw_text("Move into the spaceship\nto exit the program",
+                            400, 200, arcade.color.WHITE, 30, width=800, align="center",
+                            anchor_x="center", anchor_y="center")
         else:
             # Calculate minutes
             minutes = int(self.total_time) // 60
@@ -174,7 +183,7 @@ class MyGame(arcade.Window):
             output = f"Time: {minutes:02d}:{seconds:02d}"
 
             # Output the timer text.
-            arcade.draw_text(output, 100, 50, arcade.color.WHITE, 50)
+            arcade.draw_text(output, 50, 750, arcade.color.WHITE, 15)
 
         # Debug for the player sprite's position
         if DEBUG:
@@ -327,3 +336,7 @@ class MyGame(arcade.Window):
                     bullet.remove_from_sprite_lists()
 
             self.rooms[self.current_room].bullet_list.update()
+        if self.current_room == 3:
+            colliding = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[self.current_room].background_list)
+            if len(colliding) > 0:
+                collision = al;kjsdf;lsdjkflasjflskjf;lasdfj;lsadkfj;lkj # this crashes the code

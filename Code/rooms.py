@@ -449,6 +449,6 @@ class rooms():
         UFO = arcade.Sprite(":resources:images/space_shooter/playerShip3_orange.png", 3.5)
         UFO.center_x = 400
         UFO.center_y = 400
-        room.wall_list.append(UFO)
+        room.background_list.append(UFO)
 
         return room
