@@ -3,6 +3,11 @@ import arcade
 import os
 from roomsetup import Room
 from rooms import rooms
+from tkinter import *
+import math
+
+# ONLY SET TRUE IF DEBUGGING
+DEBUG = True
 
 # Scaling variables
 SPRITE_SCALING = 0.25
@@ -15,8 +20,9 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 SCREEN_TITLE = "Sprite Rooms Example"
 
-# Initial Variables for player attributes
+# Initial Variables for speed attributes
 MOVEMENT_SPEED = 5
+BULLET_SPEED = 4
 
 # Initial variables for object sprites
 playerUp = ":resources:images/alien/alienBlue_climb2.png"
@@ -50,6 +56,7 @@ class MyGame(arcade.Window):
         self.player_list = None
         self.enemy_list = None
         self.background_list = None
+        self.bullet_list = None
 
         # Initialize a variable for the physics engine
         self.physics_engine = None
@@ -76,7 +83,7 @@ class MyGame(arcade.Window):
         self.rooms.append(room)
 
         # Our starting room number
-        self.current_room = 0
+        self.current_room = 2
 
         # Create a physics engine for this room (only for the wall objects)
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.rooms[self.current_room].wall_list)
@@ -91,10 +98,11 @@ class MyGame(arcade.Window):
                                                 self.rooms[self.current_room].background)
         elif self.current_room == 1:
             arcade.set_background_color((0,154,23))
-        else:
             arcade.draw_lrwh_rectangle_textured(0, 0,
                                                 SCREEN_WIDTH, SCREEN_HEIGHT,
                                                 self.rooms[self.current_room].background)
+        else:
+            arcade.set_background_color((0,154,23))
 
         # Draws every "decoration" object
         self.rooms[self.current_room].background_list.draw()
@@ -108,6 +116,12 @@ class MyGame(arcade.Window):
         
         # Draws the player sprite
         self.player_list.draw()
+
+        # Debug for the player sprite's position
+        if DEBUG:
+            arcade.draw_text("X: " + str(self.player_sprite.center_x) + " Y: " + str(self.player_sprite.center_y),
+                            100, 50, arcade.color.BLACK, 14, width=200, align="center",
+                            anchor_x="center", anchor_y="center")
 
     def on_key_press(self, key, modifiers): # Called whenever a key is pressed
         # Moves the player based on key
@@ -132,30 +146,40 @@ class MyGame(arcade.Window):
         # Run the physics engine
         self.physics_engine.update()
 
+        if self.player_sprite.center_x <= 0:
+            self.player_sprite.center_x = 0
+        if self.player_sprite.center_x >= SCREEN_WIDTH:
+            self.player_sprite.center_x = 800
+        if self.player_sprite.center_y <= 0:
+            self.player_sprite.center_y = 0
+        if self.player_sprite.center_y >= 800:
+            self.player_sprite.center_y = 800
+
+
         # Figures out which room we are in, and if the "door" to the other room is passed, move to the other room
-        if self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 0:
-            self.player_sprite.center_x = 50
+        if self.player_sprite.center_x >= SCREEN_WIDTH and self.current_room == 0:
+            self.player_sprite.center_x = 5
             self.player_sprite.center_y = 50
 
             self.current_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list)                                                
-        elif self.player_sprite.center_x < 0 and self.current_room == 1:
-            self.player_sprite.center_x = 780
+        elif self.player_sprite.center_x <= 0 and self.current_room == 1:
+            self.player_sprite.center_x = 795
             self.player_sprite.center_y = 50
 
             self.current_room = 0
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list)
-        if self.player_sprite.center_x > SCREEN_WIDTH and self.current_room == 1:
-            self.player_sprite.center_x = 100
+        if self.player_sprite.center_x >= SCREEN_WIDTH and self.current_room == 1:
+            self.player_sprite.center_x = 5
             self.player_sprite.center_y = 100
 
             self.current_room = 2
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list) 
-        elif self.player_sprite.center_x < 0 and self.current_room == 2:
-            self.player_sprite.center_x = 775
+        elif (self.player_sprite.center_x <= 0 and self.player_sprite.center_y < 170) and self.current_room == 2:
+            self.player_sprite.center_x = 795
             self.player_sprite.center_y = 50
 
             self.current_room = 1
@@ -166,10 +190,8 @@ class MyGame(arcade.Window):
         if self.current_room == 1 or self.current_room == 2:
             colliding = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[self.current_room].enemy_list)
             if len(colliding) > 0:
-                self.player_sprite.center_x = 100
+                self.player_sprite.center_x = 50
                 self.player_sprite.center_y = 50
-            if self.player_sprite.center_y <= 0:
-                self.player_sprite.center_y = 0
 
         # Moves the enemies in the second room
         if self.current_room == 1:
@@ -179,3 +201,52 @@ class MyGame(arcade.Window):
 
                 if enemy.center_y <= 0 or enemy.center_y >= 800:
                     enemy.change_y *= -1
+        
+        if self.current_room == 2:
+            for enemy in self.rooms[self.current_room].enemy_list:
+
+                # First, calculate the angle to the player. We could do this
+                # only when the bullet fires, but in this case we will rotate
+                # the enemy to face the player each frame, so we'll do this
+                # each frame.
+
+                # Position the start at the enemy's current location
+                start_x = enemy.center_x
+                start_y = enemy.center_y
+
+                # Get the destination location for the bullet
+                dest_x = self.player_sprite.center_x
+                dest_y = self.player_sprite.center_y
+
+                # Do math to calculate how to get the bullet to the destination.
+                # Calculation the angle in radians between the start points
+                # and end points. This is the angle the bullet will travel.
+                x_diff = dest_x - start_x
+                y_diff = dest_y - start_y
+                angle = math.atan2(y_diff, x_diff)
+
+                # Set the enemy to face the player.
+                enemy.angle = math.degrees(angle)-90
+
+                # Shoot every 60 frames change of shooting each frame
+                if self.frame_count % 60 == 0:
+                    bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
+                    bullet.center_x = start_x
+                    bullet.center_y = start_y
+
+                    # Angle the bullet sprite
+                    bullet.angle = math.degrees(angle)
+
+                    # Taking into account the angle, calculate our change_x
+                    # and change_y. Velocity is how fast the bullet travels.
+                    bullet.change_x = math.cos(angle) * BULLET_SPEED
+                    bullet.change_y = math.sin(angle) * BULLET_SPEED
+
+                    self.bullet_list.append(bullet)
+
+            # Get rid of the bullet when it flies off-screen
+            for bullet in self.rooms[self.current_room].bullet_list:
+                if bullet.top < 0:
+                    bullet.remove_from_sprite_lists()
+
+            self.rooms[self.current_room].bullet_list.update()

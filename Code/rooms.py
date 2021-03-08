@@ -243,8 +243,8 @@ class rooms():
         # Creates the sprites for the grass
         for i in range(1, 800):
             grass = arcade.Sprite(grass_sprout, SPRITE_SCALING)
-            grass.center_x = random.randint(1, 800)
-            grass.center_y = random.randint(1, 800)
+            grass.center_x = random.randint(1, 80)*10
+            grass.center_y = random.randint(1, 80)*10
             room.background_list.append(grass)
         
         # Creates the sprites for the path
@@ -290,9 +290,8 @@ class rooms():
             tree.center_y = 775+random.randrange(0, 25)
             room.wall_list.append(tree)
 
-        # REDUNDANT CODE FOR NOW, MAY BE USEFUL LATER
         # Load the background image for this level.
-        # room.background = arcade.load_texture(":resources:images/backgrounds/abstract_2.jpg")
+        room.background = arcade.load_texture(":resources:images/backgrounds/stars.png")
 
         return room
 
@@ -304,9 +303,7 @@ class rooms():
         room.wall_list = arcade.SpriteList()
         room.enemy_list = arcade.SpriteList()
         room.background_list = arcade.SpriteList()
-
-        # Load the background image for this level.
-        room.background = arcade.load_texture(":resources:images/backgrounds/stars.png")
+        room.bullet_list = arcade.SpriteList()
 
         # Creates the water sprites
         for n in range(1, 5):
@@ -315,7 +312,7 @@ class rooms():
                 water.center_x = 400 + (n*32)
                 water.center_y = i
                 room.wall_list.append(water)
-            for i in range(450, 800, 32):
+            for i in range(450, 850, 32):
                 water = arcade.Sprite(watersprite, SPRITE_SCALING)
                 water.center_x = 400 + (n*32)
                 water.center_y = i
@@ -327,7 +324,7 @@ class rooms():
                 water.center_x = 400+(n*32)+indent
                 water.center_y = i
                 room.wall_list.append(water)
-            for i in range(450, 800, 32):
+            for i in range(450, 850, 32):
                 indent = random.randrange(-5, 5)
                 water = arcade.Sprite(watersprite, SPRITE_SCALING)
                 water.center_x = 400+(n*32)+indent
@@ -335,11 +332,108 @@ class rooms():
                 room.wall_list.append(water)
         
         for n in range(-2, 2):
-            for i in range(350, 630, 32):
+            for i in range(350, 630, 30):
                 bridgepath = arcade.Sprite(bridgepaths, SPRITE_SCALING*0.95)
                 bridgepath.center_x = i
-                bridgepath.center_y = 400+n*32
+                bridgepath.center_y = 400+n*25
                 room.background_list.append(bridgepath)
+        
+        for i in range(350, 630, 32):
+            bridgerail = arcade.Sprite(bridgerails, SPRITE_SCALING*1.5)
+            bridgerail.center_x = i + 10
+            bridgerail.center_y = 420
+            room.wall_list.append(bridgerail)
+        for i in range(350, 630, 32):
+            bridgerail = arcade.Sprite(bridgerails, SPRITE_SCALING*1.5)
+            bridgerail.center_x = i + 10
+            bridgerail.center_y = 320
+            room.wall_list.append(bridgerail)
+        
+        # Creates the sprites for the path
+        for n in range(1, 5):
+            for i in range(-50, 200, 32):
+                path = arcade.Sprite(pathway, SPRITE_SCALING)
+                path.center_x = i
+                path.center_y = (n*32-10)
+                room.background_list.append(path)
+        for n in range(1, 5):
+            for i in range(-50, 200, 32):
+                indent = random.randrange(-5, 5)
+                path = arcade.Sprite(pathway, SPRITE_SCALING)
+                path.center_x = i
+                path.center_y = (n*32-10)+indent
+                room.background_list.append(path)
+        
+        # Creates the sprites for the trees
+        for i in range(1, 11):
+            tree = arcade.Sprite(trees, SPRITE_SCALING + random.randrange(75, 100)/100)
+            tree.center_x = 780+random.randrange(-25, 0)
+            tree.center_y = 100 + i*70
+            room.wall_list.append(tree)
+        for i in range(0, 13):
+            tree = arcade.Sprite(trees, SPRITE_SCALING + random.randrange(75, 100)/100)
+            tree.center_x = i*70+20
+            tree.center_y = 775+random.randrange(0, 25)
+            room.wall_list.append(tree)
 
+        # Creates the sprites for the rocks
+        
+        # Creates the sprites for the pebbles
+        for n in range(180, 700, 130):
+            for i in range(0, 270, 130):
+                pebble = arcade.Sprite(pebbles, SPRITE_SCALING*3+(random.randrange(1, 50)/100))
+                pebble.center_x = random.randrange(0, 250)
+                pebble.center_y = n+random.randrange(0, 40)
+                room.wall_list.append(pebble)
+
+        # Creates the sprites for the bushes
+        bushScaling = SPRITE_SCALING*1.4+(random.randrange(1, 10)/100)
+
+        bush = arcade.Sprite(bushes, bushScaling)
+        bush.center_x = 640
+        bush.center_y = 652.5
+        room.wall_list.append(bush)
+
+        bush = arcade.Sprite(bushes, bushScaling)
+        bush.center_x = 615
+        bush.center_y = 497.5
+        room.wall_list.append(bush)
+
+        bush = arcade.Sprite(bushes, bushScaling)
+        bush.center_x = 650
+        bush.center_y = 82.5
+        room.wall_list.append(bush)
+
+        bush = arcade.Sprite(bushes, bushScaling)
+        bush.center_x = 595
+        bush.center_y = 247.5
+        room.wall_list.append(bush)
+
+        enemy = arcade.Sprite(enemies, SPRITE_SCALING)
+        enemy.center_x = 66
+        enemy.center_y = 459
+        enemy.angle = 180
+        room.enemy_list.append(enemy)
+
+        enemy = arcade.Sprite(enemies, SPRITE_SCALING)
+        enemy.center_x = 306
+        enemy.center_y = 616
+        enemy.angle = 180
+        room.enemy_list.append(enemy)
+
+        enemy = arcade.Sprite(enemies, SPRITE_SCALING)
+        enemy.center_x = 664
+        enemy.center_y = 574
+        enemy.angle = 180
+        room.enemy_list.append(enemy)
+
+        enemy = arcade.Sprite(enemies, SPRITE_SCALING)
+        enemy.center_x = 582
+        enemy.center_y = 42
+        enemy.angle = 180
+        room.enemy_list.append(enemy)
 
         return room
+    
+        # Load the background image for this level.
+        room.background = arcade.load_texture(":resources:images/backgrounds/stars.png")
