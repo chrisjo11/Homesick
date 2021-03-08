@@ -31,7 +31,6 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.BLACK)
 
         self.frame_count = 0
-
         self.enemy_list = None
         self.bullet_list = None
         self.player_list = None

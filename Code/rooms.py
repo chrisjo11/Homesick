@@ -412,25 +412,25 @@ class rooms():
         enemy = arcade.Sprite(enemies, SPRITE_SCALING)
         enemy.center_x = 66
         enemy.center_y = 459
-        enemy.angle = 180
+        enemy.angle = 0
         room.enemy_list.append(enemy)
 
         enemy = arcade.Sprite(enemies, SPRITE_SCALING)
         enemy.center_x = 306
         enemy.center_y = 616
-        enemy.angle = 180
+        enemy.angle = 0
         room.enemy_list.append(enemy)
 
         enemy = arcade.Sprite(enemies, SPRITE_SCALING)
         enemy.center_x = 664
         enemy.center_y = 574
-        enemy.angle = 180
+        enemy.angle = 0
         room.enemy_list.append(enemy)
 
         enemy = arcade.Sprite(enemies, SPRITE_SCALING)
         enemy.center_x = 582
         enemy.center_y = 42
-        enemy.angle = 180
+        enemy.angle = 0
         room.enemy_list.append(enemy)
 
         return room

@@ -57,6 +57,7 @@ class MyGame(arcade.Window):
         self.enemy_list = None
         self.background_list = None
         self.bullet_list = None
+        self.frame_count = 0
 
         # Initialize a variable for the physics engine
         self.physics_engine = None
@@ -108,8 +109,12 @@ class MyGame(arcade.Window):
         self.rooms[self.current_room].background_list.draw()
 
         # Draws the enemies for each stage (only stages with enemies)
-        if self.current_room == 1:
+        if self.current_room in [1, 2]:
             self.rooms[self.current_room].enemy_list.draw()
+        
+        # Draws the bullets for the third stage
+        if self.current_room == 2:
+            self.rooms[self.current_room].bullet_list.draw()
 
         # Draw the walls for each room
         self.rooms[self.current_room].wall_list.draw()
@@ -142,6 +147,8 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def on_update(self, delta_time): # Called continuously (continuous logic)
+
+        self.frame_count += 1
 
         # Run the physics engine
         self.physics_engine.update()
@@ -187,7 +194,7 @@ class MyGame(arcade.Window):
                                                              self.rooms[self.current_room].wall_list)
 
         # Checks for collision with enemies in rooms with enemies
-        if self.current_room == 1 or self.current_room == 2:
+        if self.current_room == 1:
             colliding = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[self.current_room].enemy_list)
             if len(colliding) > 0:
                 self.player_sprite.center_x = 50
@@ -242,7 +249,7 @@ class MyGame(arcade.Window):
                     bullet.change_x = math.cos(angle) * BULLET_SPEED
                     bullet.change_y = math.sin(angle) * BULLET_SPEED
 
-                    self.bullet_list.append(bullet)
+                    self.rooms[self.current_room].bullet_list.append(bullet)
 
             # Get rid of the bullet when it flies off-screen
             for bullet in self.rooms[self.current_room].bullet_list:
