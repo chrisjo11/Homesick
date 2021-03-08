@@ -434,6 +434,21 @@ class rooms():
         room.enemy_list.append(enemy)
 
         return room
-    
-        # Load the background image for this level.
+
+    def setup_room_4():
+        # Initializes a room object
+        room = Room()
+
+        # Sprite lists
+        room.wall_list = arcade.SpriteList()
+        room.enemy_list = arcade.SpriteList()
+        room.background_list = arcade.SpriteList()
+
         room.background = arcade.load_texture(":resources:images/backgrounds/stars.png")
+
+        UFO = arcade.Sprite(":resources:images/space_shooter/playerShip3_orange.png", 3.5)
+        UFO.center_x = 400
+        UFO.center_y = 400
+        room.wall_list.append(UFO)
+
+        return room

@@ -7,7 +7,7 @@ from tkinter import *
 import math
 
 # ONLY SET TRUE IF DEBUGGING
-DEBUG = True
+DEBUG = False
 
 # Scaling variables
 SPRITE_SCALING = 0.25
@@ -65,6 +65,11 @@ class MyGame(arcade.Window):
         self.enemy_list = None
         self.background_list = None
         self.bullet_list = None
+        self.killcount = 0
+        self.total_time = 0
+        self.timeEnd = 0
+
+        # Initialize a variable for frame count
         self.frame_count = 0
 
         # Initialize a variable for the physics engine
@@ -91,8 +96,11 @@ class MyGame(arcade.Window):
         room = rooms.setup_room_3()
         self.rooms.append(room)
 
+        room = rooms.setup_room_4()
+        self.rooms.append(room)
+
         # Our starting room number
-        self.current_room = 0
+        self.current_room = 3
 
         # Create a physics engine for this room (only for the wall objects)
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.rooms[self.current_room].wall_list)
@@ -110,18 +118,31 @@ class MyGame(arcade.Window):
             arcade.draw_lrwh_rectangle_textured(0, 0,
                                                 SCREEN_WIDTH, SCREEN_HEIGHT,
                                                 self.rooms[self.current_room].background)
-        else:
+        elif self.current_room == 2:
             arcade.set_background_color((0,154,23))
+        else:
+            arcade.set_background_color((0, 0, 0))
+            arcade.draw_lrwh_rectangle_textured(0, 0,
+                                                SCREEN_WIDTH, SCREEN_HEIGHT,
+                                                self.rooms[self.current_room].background)
 
         # Draws every "decoration" object
         self.rooms[self.current_room].background_list.draw()
 
-        # Draws the enemies for each stage (only stages with enemies)
-        if self.current_room in [1, 2]:
-            self.rooms[self.current_room].enemy_list.draw()
+        if self.current_room == 1:
+            # Draws the enemies for each stage (only stages with enemies)
+            if self.current_room in [1, 2]:
+                self.rooms[self.current_room].enemy_list.draw()
 
-        # Draw the walls for each room
-        self.rooms[self.current_room].wall_list.draw()
+            # Draw the walls for each room
+            self.rooms[self.current_room].wall_list.draw()
+        else:
+            # Draw the walls for each room
+            self.rooms[self.current_room].wall_list.draw()
+
+            # Draws the enemies for each stage (only stages with enemies)
+            if self.current_room in [1, 2]:
+                self.rooms[self.current_room].enemy_list.draw()
 
         # Draws the bullets for the third stage
         if self.current_room == 2:
@@ -129,6 +150,31 @@ class MyGame(arcade.Window):
         
         # Draws the player sprite
         self.player_list.draw()
+
+        if self.current_room == 3:
+            # Calculate minutes
+            minutes = int(self.timeEnd) // 60
+
+            # Calculate seconds
+            seconds = int(self.timeEnd) % 60
+
+            # Figure out our output
+            output = f"Time: {minutes:02d}:{seconds:02d}"
+
+            # Output the timer text.
+            arcade.draw_text(output, 250, 700, arcade.color.WHITE, 50)
+        else:
+            # Calculate minutes
+            minutes = int(self.total_time) // 60
+
+            # Calculate seconds
+            seconds = int(self.total_time) % 60
+
+            # Figure out our output
+            output = f"Time: {minutes:02d}:{seconds:02d}"
+
+            # Output the timer text.
+            arcade.draw_text(output, 100, 50, arcade.color.WHITE, 50)
 
         # Debug for the player sprite's position
         if DEBUG:
@@ -155,7 +201,7 @@ class MyGame(arcade.Window):
             self.player_sprite.change_x = 0
 
     def on_update(self, delta_time): # Called continuously (continuous logic)
-
+        self.total_time += delta_time
         self.frame_count += 1
 
         # Run the physics engine
@@ -200,6 +246,14 @@ class MyGame(arcade.Window):
             self.current_room = 1
             self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                              self.rooms[self.current_room].wall_list)
+        if self.player_sprite.center_x >= SCREEN_WIDTH and self.current_room == 2:
+            self.player_sprite.center_x = 5
+            self.player_sprite.center_y = 100
+
+            self.current_room = 3
+            self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
+                                                             self.rooms[self.current_room].wall_list)
+            self.timeEnd = self.total_time
 
         # Checks for collision with enemies in rooms with enemies
         if self.current_room == 1:
@@ -207,6 +261,9 @@ class MyGame(arcade.Window):
             if len(colliding) > 0:
                 self.player_sprite.center_x = 50
                 self.player_sprite.center_y = 50
+                music = arcade.Sound(":resources:sounds/hurt3.wav", streaming=True)
+                music.play(MUSIC_VOLUME)
+                self.killcount += 1
 
         # Moves the enemies in the second room
         if self.current_room == 1:
@@ -250,7 +307,7 @@ class MyGame(arcade.Window):
 
                     # PEW
                     music = arcade.Sound(":resources:sounds/laser1.mp3", streaming=True)
-                    self.current_player = music.play(MUSIC_VOLUME)
+                    music.play(MUSIC_VOLUME)
 
                     self.rooms[self.current_room].bullet_list.append(bullet)
 
@@ -259,6 +316,9 @@ class MyGame(arcade.Window):
             if len(colliding) > 0:
                 self.player_sprite.center_x = 50
                 self.player_sprite.center_y = 50
+                music = arcade.Sound(":resources:sounds/hurt3.wav", streaming=True)
+                music.play(MUSIC_VOLUME)
+                self.killcount += 1
 
             # Get rid of the bullet when it flies off-screen or if it hits a wall
             for bullet in self.rooms[self.current_room].bullet_list:

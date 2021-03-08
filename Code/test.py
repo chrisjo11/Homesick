@@ -1,101 +1,61 @@
 """
-Background Music Example
+Show a timer on-screen.
 
 If Python and Arcade are installed, this example can be run from the command line with:
-python -m arcade.examples.background_music
+python -m arcade.examples.timer
 """
-import arcade
-import time
 
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 300
-SCREEN_TITLE = "Starting Template Simple"
-MUSIC_VOLUME = 0.5
+import arcade
+
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+SCREEN_TITLE = "Timer Example"
 
 
 class MyGame(arcade.Window):
-    """ Main application class. """
+    """
+    Main application class.
+    """
 
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
-
-        arcade.set_background_color(arcade.color.WHITE)
-
-        # Variables used to manage our music. See setup() for giving them
-        # values.
-        self.music_list = []
-        self.current_song_index = 0
-        self.current_player = None
-        self.music = None
-
-    def advance_song(self):
-        """ Advance our pointer to the next song. This does NOT start the song. """
-        self.current_song_index += 1
-        if self.current_song_index >= len(self.music_list):
-            self.current_song_index = 0
-        print(f"Advancing song to {self.current_song_index}.")
-
-    def play_song(self):
-        """ Play the song. """
-        # Stop what is currently playing.
-        if self.music:
-            self.music.stop()
-
-        # Play the next song
-        print(f"Playing {self.music_list[self.current_song_index]}")
-        self.music = arcade.Sound(self.music_list[self.current_song_index], streaming=True)
-        self.current_player = self.music.play(MUSIC_VOLUME)
-        # This is a quick delay. If we don't do this, our elapsed time is 0.0
-        # and on_update will think the music is over and advance us to the next
-        # song before starting this one.
-        time.sleep(0.03)
+    def __init__(self):
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        self.total_time = 0.0
 
     def setup(self):
-        """ Set up the game here. Call this function to restart the game. """
-
-        # List of music
-        self.music_list = [":resources:music/funkyrobot.mp3", ":resources:music/1918.mp3"]
-        # Array index of what to play
-        self.current_song_index = 0
-        # Play the song
-        self.play_song()
+        """
+        Set up the application.
+        """
+        arcade.set_background_color(arcade.color.WHITE)
+        self.total_time = 0.0
 
     def on_draw(self):
-        """ Render the screen. """
+        """ Use this function to draw everything to the screen. """
 
+        # Start the render. This must happen before any drawing
+        # commands. We do NOT need an stop render command.
         arcade.start_render()
 
-        position = self.music.get_stream_position(self.current_player)
-        length = self.music.get_length()
+        # Calculate minutes
+        minutes = int(self.total_time) // 60
 
-        size = 20
-        margin = size * .5
+        # Calculate seconds by using a modulus (remainder)
+        seconds = int(self.total_time) % 60
 
-        # Print time elapsed and total
-        y = SCREEN_HEIGHT - (size + margin)
-        text = f"{int(position) // 60}:{int(position) % 60:02} of {int(length) // 60}:{int(length) % 60:02}"
-        arcade.draw_text(text, 0, y, arcade.csscolor.BLACK, size)
+        # Figure out our output
+        output = f"Time: {minutes:02d}:{seconds:02d}"
 
-        # Print current song
-        y -= size + margin
-        text = f"Currently playing: {self.music_list[self.current_song_index]}"
-        arcade.draw_text(text, 0, y, arcade.csscolor.BLACK, size)
+        # Output the timer text.
+        arcade.draw_text(output, 300, 300, arcade.color.BLACK, 30)
 
-    def on_update(self, dt):
-
-        position = self.music.get_stream_position(self.current_player)
-
-        # The position pointer is reset to 0 right after we finish the song.
-        # This makes it very difficult to figure out if we just started playing
-        # or if we are doing playing.
-        if position == 0.0:
-            self.advance_song()
-            self.play_song()
+    def on_update(self, delta_time):
+        """
+        All the logic to move, and the game logic goes here.
+        """
+        self.total_time += delta_time
 
 
 def main():
-    """ Main method """
-    window = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    window = MyGame()
     window.setup()
     arcade.run()
 
