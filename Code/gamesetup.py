@@ -30,6 +30,11 @@ playerDown = ":resources:images/alien/alienBlue_front.png"
 playerRight = ":resources:images/alien/alienBlue_walk1.png"
 playerLeft = ":resources:images/alien/alienBlue_jump.png"
 
+# Initial variables for difficulty
+isEasy = False
+isNormal = True
+isHard = False
+
 class MyGame(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
@@ -84,7 +89,7 @@ class MyGame(arcade.Window):
         self.rooms.append(room)
 
         # Our starting room number
-        self.current_room = 2
+        self.current_room = 0
 
         # Create a physics engine for this room (only for the wall objects)
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.rooms[self.current_room].wall_list)
@@ -111,13 +116,13 @@ class MyGame(arcade.Window):
         # Draws the enemies for each stage (only stages with enemies)
         if self.current_room in [1, 2]:
             self.rooms[self.current_room].enemy_list.draw()
-        
-        # Draws the bullets for the third stage
-        if self.current_room == 2:
-            self.rooms[self.current_room].bullet_list.draw()
 
         # Draw the walls for each room
         self.rooms[self.current_room].wall_list.draw()
+
+        # Draws the bullets for the third stage
+        if self.current_room == 2:
+            self.rooms[self.current_room].bullet_list.draw()
         
         # Draws the player sprite
         self.player_list.draw()
@@ -211,12 +216,6 @@ class MyGame(arcade.Window):
         
         if self.current_room == 2:
             for enemy in self.rooms[self.current_room].enemy_list:
-
-                # First, calculate the angle to the player. We could do this
-                # only when the bullet fires, but in this case we will rotate
-                # the enemy to face the player each frame, so we'll do this
-                # each frame.
-
                 # Position the start at the enemy's current location
                 start_x = enemy.center_x
                 start_y = enemy.center_y
@@ -226,8 +225,6 @@ class MyGame(arcade.Window):
                 dest_y = self.player_sprite.center_y
 
                 # Do math to calculate how to get the bullet to the destination.
-                # Calculation the angle in radians between the start points
-                # and end points. This is the angle the bullet will travel.
                 x_diff = dest_x - start_x
                 y_diff = dest_y - start_y
                 angle = math.atan2(y_diff, x_diff)
@@ -235,25 +232,31 @@ class MyGame(arcade.Window):
                 # Set the enemy to face the player.
                 enemy.angle = math.degrees(angle)-90
 
-                # Shoot every 60 frames change of shooting each frame
-                if self.frame_count % 60 == 0:
-                    bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
+                if self.frame_count % 80 == 0: # Shoot at an interval (increasing with difficulty)
+                    # Creates the sprite for the bullet
+                    bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png", SPRITE_SCALING+0.25)
                     bullet.center_x = start_x
                     bullet.center_y = start_y
 
                     # Angle the bullet sprite
                     bullet.angle = math.degrees(angle)
 
-                    # Taking into account the angle, calculate our change_x
-                    # and change_y. Velocity is how fast the bullet travels.
+                    # Move the bullet towards the player
                     bullet.change_x = math.cos(angle) * BULLET_SPEED
                     bullet.change_y = math.sin(angle) * BULLET_SPEED
 
                     self.rooms[self.current_room].bullet_list.append(bullet)
 
-            # Get rid of the bullet when it flies off-screen
+            # If the bullet is colliding with the player, move the player back to the beginning
+            colliding = arcade.check_for_collision_with_list(self.player_sprite, self.rooms[self.current_room].bullet_list)
+            if len(colliding) > 0:
+                self.player_sprite.center_x = 50
+                self.player_sprite.center_y = 50
+
+            # Get rid of the bullet when it flies off-screen or if it hits a wall
             for bullet in self.rooms[self.current_room].bullet_list:
-                if bullet.top < 0:
+                colliding = arcade.check_for_collision_with_list(bullet, self.rooms[self.current_room].wall_list)
+                if (isEasy and len(colliding) > 0) or bullet.top < 0:
                     bullet.remove_from_sprite_lists()
 
             self.rooms[self.current_room].bullet_list.update()
