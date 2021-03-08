@@ -1,7 +1,5 @@
 from gamesetup import MyGame
 import arcade
-from tkinter import *
-from titleScreen import Application
 
 # Inititial variables for screen details
 SCREEN_WIDTH = 800

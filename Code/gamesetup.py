@@ -3,7 +3,6 @@ import arcade
 import os
 from roomsetup import Room
 from rooms import rooms
-from tkinter import *
 import math
 
 # ONLY SET TRUE IF DEBUGGING
@@ -157,9 +156,14 @@ class MyGame(arcade.Window):
             seconds = int(self.timeEnd) % 60
 
             # Output timer
-            arcade.draw_text("Time: " + str(minutes) + ":" + str(seconds) + " Death Count: " + str(self.killcount),
-                            400, 600, arcade.color.WHITE, 30, width=800, align="center",
-                            anchor_x="center", anchor_y="center")
+            if seconds >= 10:
+                arcade.draw_text("Time: " + str(minutes) + ":" + str(seconds) + " Death Count: " + str(self.killcount),
+                                400, 600, arcade.color.WHITE, 30, width=800, align="center",
+                                anchor_x="center", anchor_y="center")
+            else:
+                arcade.draw_text("Time: " + str(minutes) + ":0" + str(seconds) + " Death Count: " + str(self.killcount),
+                                    400, 600, arcade.color.WHITE, 30, width=800, align="center",
+                                    anchor_x="center", anchor_y="center")
 
             # Output winning message
             arcade.draw_text("YOU WON!",
