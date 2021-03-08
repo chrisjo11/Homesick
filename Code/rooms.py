@@ -196,9 +196,6 @@ class rooms():
 
         room.wall_list.append(wall)
 
-        # Load the background image for this level.
-        room.background = arcade.load_texture(":resources:images/backgrounds/abstract_1.jpg")
-
         return room
 
 

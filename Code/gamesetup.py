@@ -110,9 +110,7 @@ class MyGame(arcade.Window):
 
         # Draws the background texture for each room
         if self.current_room == 0:
-            arcade.draw_lrwh_rectangle_textured(0, 0,
-                                                SCREEN_WIDTH, SCREEN_HEIGHT,
-                                                self.rooms[self.current_room].background)
+            arcade.set_background_color((101, 67, 33))
         elif self.current_room == 1:
             arcade.set_background_color((0,154,23))
             arcade.draw_lrwh_rectangle_textured(0, 0,
