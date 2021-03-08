@@ -24,6 +24,9 @@ SCREEN_TITLE = "Sprite Rooms Example"
 MOVEMENT_SPEED = 5
 BULLET_SPEED = 4
 
+# Initial variables for sound
+MUSIC_VOLUME = 0.5
+
 # Initial variables for object sprites
 playerUp = ":resources:images/alien/alienBlue_climb2.png"
 playerDown = ":resources:images/alien/alienBlue_front.png"
@@ -244,6 +247,10 @@ class MyGame(arcade.Window):
                     # Move the bullet towards the player
                     bullet.change_x = math.cos(angle) * BULLET_SPEED
                     bullet.change_y = math.sin(angle) * BULLET_SPEED
+
+                    # PEW
+                    music = arcade.Sound(":resources:sounds/laser1.mp3", streaming=True)
+                    self.current_player = music.play(MUSIC_VOLUME)
 
                     self.rooms[self.current_room].bullet_list.append(bullet)
 

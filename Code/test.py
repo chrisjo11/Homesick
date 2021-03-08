@@ -1,131 +1,96 @@
 """
-Show how to have enemies shoot bullets aimed at the player.
+Background Music Example
 
 If Python and Arcade are installed, this example can be run from the command line with:
-python -m arcade.examples.sprite_bullets_enemy_aims
+python -m arcade.examples.background_music
 """
-
 import arcade
-import math
-import os
+import time
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Sprites and Bullets Enemy Aims Example"
-BULLET_SPEED = 4
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 300
+SCREEN_TITLE = "Starting Template Simple"
+MUSIC_VOLUME = 0.5
 
 
 class MyGame(arcade.Window):
-    """ Main application class """
+    """ Main application class. """
 
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
 
-        # Set the working directory (where we expect to find files) to the same
-        # directory this .py file is in. You can leave this out of your own
-        # code, but it is needed to easily run the examples using "python -m"
-        # as mentioned at the top of this program.
-        file_path = os.path.dirname(os.path.abspath(__file__))
-        os.chdir(file_path)
+        arcade.set_background_color(arcade.color.WHITE)
 
-        arcade.set_background_color(arcade.color.BLACK)
+        # Variables used to manage our music. See setup() for giving them
+        # values.
+        self.music_list = []
+        self.current_song_index = 0
+        self.current_player = None
+        self.music = None
 
-        self.frame_count = 0
-        self.enemy_list = None
-        self.bullet_list = None
-        self.player_list = None
-        self.player = None
+    def advance_song(self):
+        """ Advance our pointer to the next song. This does NOT start the song. """
+        self.current_song_index += 1
+        if self.current_song_index >= len(self.music_list):
+            self.current_song_index = 0
+        print(f"Advancing song to {self.current_song_index}.")
+
+    def play_song(self):
+        """ Play the song. """
+        # Stop what is currently playing.
+        if self.music:
+            self.music.stop()
+
+        # Play the next song
+        print(f"Playing {self.music_list[self.current_song_index]}")
+        self.music = arcade.Sound(self.music_list[self.current_song_index], streaming=True)
+        self.current_player = self.music.play(MUSIC_VOLUME)
+        # This is a quick delay. If we don't do this, our elapsed time is 0.0
+        # and on_update will think the music is over and advance us to the next
+        # song before starting this one.
+        time.sleep(0.03)
 
     def setup(self):
-        self.enemy_list = arcade.SpriteList()
-        self.bullet_list = arcade.SpriteList()
-        self.player_list = arcade.SpriteList()
+        """ Set up the game here. Call this function to restart the game. """
 
-        # Add player ship
-        self.player = arcade.Sprite(":resources:images/space_shooter/playerShip1_orange.png", 0.5)
-        self.player_list.append(self.player)
-
-        # Add top-left enemy ship
-        enemy = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", 0.5)
-        enemy.center_x = 120
-        enemy.center_y = SCREEN_HEIGHT - enemy.height
-        enemy.angle = 180
-        self.enemy_list.append(enemy)
-
-        # Add top-right enemy ship
-        enemy = arcade.Sprite(":resources:images/space_shooter/playerShip1_green.png", 0.5)
-        enemy.center_x = SCREEN_WIDTH - 120
-        enemy.center_y = SCREEN_HEIGHT - enemy.height
-        enemy.angle = 180
-        self.enemy_list.append(enemy)
+        # List of music
+        self.music_list = [":resources:music/funkyrobot.mp3", ":resources:music/1918.mp3"]
+        # Array index of what to play
+        self.current_song_index = 0
+        # Play the song
+        self.play_song()
 
     def on_draw(self):
-        """Render the screen. """
+        """ Render the screen. """
 
         arcade.start_render()
 
-        self.enemy_list.draw()
-        self.bullet_list.draw()
-        self.player_list.draw()
+        position = self.music.get_stream_position(self.current_player)
+        length = self.music.get_length()
 
-    def on_update(self, delta_time):
-        """All the logic to move, and the game logic goes here. """
+        size = 20
+        margin = size * .5
 
-        self.frame_count += 1
+        # Print time elapsed and total
+        y = SCREEN_HEIGHT - (size + margin)
+        text = f"{int(position) // 60}:{int(position) % 60:02} of {int(length) // 60}:{int(length) % 60:02}"
+        arcade.draw_text(text, 0, y, arcade.csscolor.BLACK, size)
 
-        # Loop through each enemy that we have
-        for enemy in self.enemy_list:
+        # Print current song
+        y -= size + margin
+        text = f"Currently playing: {self.music_list[self.current_song_index]}"
+        arcade.draw_text(text, 0, y, arcade.csscolor.BLACK, size)
 
-            # First, calculate the angle to the player. We could do this
-            # only when the bullet fires, but in this case we will rotate
-            # the enemy to face the player each frame, so we'll do this
-            # each frame.
+    def on_update(self, dt):
 
-            # Position the start at the enemy's current location
-            start_x = enemy.center_x
-            start_y = enemy.center_y
+        position = self.music.get_stream_position(self.current_player)
 
-            # Get the destination location for the bullet
-            dest_x = self.player.center_x
-            dest_y = self.player.center_y
-
-            # Do math to calculate how to get the bullet to the destination.
-            # Calculation the angle in radians between the start points
-            # and end points. This is the angle the bullet will travel.
-            x_diff = dest_x - start_x
-            y_diff = dest_y - start_y
-            angle = math.atan2(y_diff, x_diff)
-
-            # Set the enemy to face the player.
-            enemy.angle = math.degrees(angle)-90
-
-            # Shoot every 60 frames change of shooting each frame
-            if self.frame_count % 60 == 0:
-                bullet = arcade.Sprite(":resources:images/space_shooter/laserBlue01.png")
-                bullet.center_x = start_x
-                bullet.center_y = start_y
-
-                # Angle the bullet sprite
-                bullet.angle = math.degrees(angle)
-
-                # Taking into account the angle, calculate our change_x
-                # and change_y. Velocity is how fast the bullet travels.
-                bullet.change_x = math.cos(angle) * BULLET_SPEED
-                bullet.change_y = math.sin(angle) * BULLET_SPEED
-
-                self.bullet_list.append(bullet)
-
-        # Get rid of the bullet when it flies off-screen
-        for bullet in self.bullet_list:
-            if bullet.top < 0:
-                bullet.remove_from_sprite_lists()
-
-        self.bullet_list.update()
-
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """Called whenever the mouse moves. """
-        self.player.center_x = x
-        self.player.center_y = y
+        # The position pointer is reset to 0 right after we finish the song.
+        # This makes it very difficult to figure out if we just started playing
+        # or if we are doing playing.
+        if position == 0.0:
+            self.advance_song()
+            self.play_song()
 
 
 def main():
